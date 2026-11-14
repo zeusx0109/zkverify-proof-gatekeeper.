@@ -10,18 +10,10 @@ export interface AgentResponse extends Decision {
 
 export async function handleTask(task: GatekeeperTask, seen: SeenProofStore): Promise<AgentResponse> {
   const policy = await evaluateCondition(task, seen, config.GATEKEEPER_VK_HASH);
-
   if (policy.decision === "REJECT") {
     if (task.input.proof_tx) await seen.add(task.input.proof_tx);
     return policy;
   }
-
-  // Fail closed until the official circuit witness schema is mapped and
-  // proof generation + Kurier finalization have been exercised end-to-end.
-  // Do not approve based on task summary fields alone.
-  return {
-    decision: "REJECT",
-    reason_code: "PROOF_PIPELINE_NOT_CONFIGURED",
-    proof_tx: task.input.proof_tx
-  };
+  // Fail closed until official witness mapping, proof generation and Kurier finalization are verified.
+  return { decision: "REJECT", reason_code: "PROOF_PIPELINE_NOT_CONFIGURED", proof_tx: task.input.proof_tx };
 }
