@@ -14,5 +14,4 @@ const envSchema = z.object({
   TASK_TIMEOUT_MS: z.coerce.number().int().positive().max(55_000).default(45_000),
   SEEN_PROOFS_FILE: z.string().default("data/seen-proofs.json")
 });
-
 export const config = envSchema.parse(process.env);
